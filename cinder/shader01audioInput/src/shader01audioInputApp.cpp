@@ -14,13 +14,15 @@
 #include "cinder/Utilities.h"
 #include "cinder/Filesystem.h"
 #include "cinder/gl/GlslProg.h"
+#include "cinder/audio/FftProcessor.h"
+#include "cinder/audio/Input.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class shader00noInputApp : public AppNative {
-  public:
+class shader01audioInputApp : public AppNative {
+public:
 	void setup();
 	void update();
 	void draw();
@@ -35,18 +37,33 @@ class shader00noInputApp : public AppNative {
     bool                    mHide;          //show/hide error and fps
     std::string             mError;
     int                     mMode;          //which shape
+    
+    audio::Input            mInput;
+	std::shared_ptr<float>  mFftDataRef;
+	audio::PcmBuffer32fRef  mPcmBuffer;
+    audio::Buffer32fRef     mBufferLeft;
+    audio::Buffer32fRef     mBufferRight;
+    int                     mBufferSize;
 };
 
-void shader00noInputApp::setup() {
+void shader01audioInputApp::setup() {
+    
+    //--defaults
     mHide= false;   //also keydown 'i'
     mError= "";
     mMode= 0;
+    
+    //--audio
+    mInput= audio::Input();     //use default input device
+    mInput.start();             //start capturing
+
+    //--shaders
     mPathVert= getPathDirectory(app::getAppPath().string())+"shaders/_default_vert.glsl";
     mPathFrag= getPathDirectory(app::getAppPath().string())+"shaders/_default_frag.glsl";
     loadShader();
 }
 
-void shader00noInputApp::keyDown(ci::app::KeyEvent event) {
+void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
 	if(event.getChar()=='i') {
         mHide= !mHide;
     } else if(event.getCode()==KeyEvent::KEY_ESCAPE) {
@@ -67,7 +84,7 @@ void shader00noInputApp::keyDown(ci::app::KeyEvent event) {
         mMode= (mMode+1)%4;
     }
 }
-void shader00noInputApp::loadShader() {
+void shader01audioInputApp::loadShader() {
     mError= "";
     try {
         mTimeVert= fs::last_write_time(mPathVert);
@@ -82,13 +99,27 @@ void shader00noInputApp::loadShader() {
     }
 }
 
-void shader00noInputApp::update() {
+void shader01audioInputApp::update() {
+    
+    //--audio input
+    mPcmBuffer= mInput.getPcmBuffer();
+    if(mPcmBuffer) {
+        mBufferSize= mPcmBuffer->getSampleCount();
+        //console()<<"mBufferSize: "<<mBufferSize<<std::endl;
+        mBufferLeft= mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_LEFT);
+        mBufferRight= mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_RIGHT);
+        uint16_t bandCount= 512;
+        mFftDataRef= audio::calculateFft(mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_LEFT), bandCount);
+        //mFftDataRef= audio::calculateFft(mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_RIGHT), bandCount);
+    }
+    
+    //--shaders
     if((fs::last_write_time(mPathVert)>mTimeVert)||(fs::last_write_time(mPathFrag)>mTimeFrag)) {
         loadShader();
     }
 }
 
-void shader00noInputApp::draw() {
+void shader01audioInputApp::draw() {
 	gl::clear(Color(0, 0, 0));
     
     mShader->bind();
@@ -125,4 +156,4 @@ void shader00noInputApp::draw() {
     }
 }
 
-CINDER_APP_NATIVE(shader00noInputApp, RendererGl)
+CINDER_APP_NATIVE(shader01audioInputApp, RendererGl)
