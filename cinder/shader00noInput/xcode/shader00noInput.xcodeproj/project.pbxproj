@@ -15,10 +15,10 @@
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		222ACA2ABE414A1D83266A8F /* shader00noInput_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = C46519B31AA14614ACAC3E46 /* shader00noInput_Prefix.pch */; };
-		46D8A3726D1F47A693F56019 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = F9AF18ED22E84D3C8AA4BFB6 /* CinderApp.icns */; };
-		4EC10C13889546CAAAAA5756 /* Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB5D19251984469B2678826 /* Resources.h */; };
-		873C4C61502241CDB1416CB2 /* shader00noInputApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2106E7979C634B52B234D8DA /* shader00noInputApp.cpp */; };
+		AFAC86C4A3FA4DF99E066C6B /* shader00noInput_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 2BB7B97C43724176AF511FEA /* shader00noInput_Prefix.pch */; };
+		02C5BA1C17684748A7919144 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7D1D03F40CE746F6A91EF824 /* CinderApp.icns */; };
+		E36618C8505240ECAE98B609 /* Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = C5FAF5D73776469FA9D8A7B8 /* Resources.h */; };
+		B738C80474CF4A2FB1981C44 /* shader00noInputApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF660A7AF7C6420FBC05FA99 /* shader00noInputApp.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,11 +33,11 @@
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* shader00noInput.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shader00noInput.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2106E7979C634B52B234D8DA /* shader00noInputApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; path = ../src/shader00noInputApp.cpp; sourceTree = "<group>"; name = shader00noInputApp.cpp; };
-		5CB5D19251984469B2678826 /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../include/Resources.h; sourceTree = "<group>"; name = Resources.h; };
-		F9AF18ED22E84D3C8AA4BFB6 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; name = CinderApp.icns; };
-		8F712FF13A4649A8A519E842 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; name = Info.plist; };
-		C46519B31AA14614ACAC3E46 /* shader00noInput_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = shader00noInput_Prefix.pch; sourceTree = "<group>"; name = shader00noInput_Prefix.pch; };
+		CF660A7AF7C6420FBC05FA99 /* shader00noInputApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; path = ../src/shader00noInputApp.cpp; sourceTree = "<group>"; name = shader00noInputApp.cpp; };
+		C5FAF5D73776469FA9D8A7B8 /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ../include/Resources.h; sourceTree = "<group>"; name = Resources.h; };
+		7D1D03F40CE746F6A91EF824 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; name = CinderApp.icns; };
+		E2932AE848D1406F97FB6A56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; name = Info.plist; };
+		2BB7B97C43724176AF511FEA /* shader00noInput_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; path = shader00noInput_Prefix.pch; sourceTree = "<group>"; name = shader00noInput_Prefix.pch; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +62,7 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				2106E7979C634B52B234D8DA /* shader00noInputApp.cpp */,
+				CF660A7AF7C6420FBC05FA99 /* shader00noInputApp.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -122,8 +122,8 @@
 		29B97315FDCFA39411CA2CEA /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				5CB5D19251984469B2678826 /* Resources.h */,
-				C46519B31AA14614ACAC3E46 /* shader00noInput_Prefix.pch */,
+				C5FAF5D73776469FA9D8A7B8 /* Resources.h */,
+				2BB7B97C43724176AF511FEA /* shader00noInput_Prefix.pch */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -131,8 +131,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F9AF18ED22E84D3C8AA4BFB6 /* CinderApp.icns */,
-				8F712FF13A4649A8A519E842 /* Info.plist */,
+				7D1D03F40CE746F6A91EF824 /* CinderApp.icns */,
+				E2932AE848D1406F97FB6A56 /* Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -196,7 +196,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46D8A3726D1F47A693F56019 /* CinderApp.icns in Resources */,
+				02C5BA1C17684748A7919144 /* CinderApp.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,7 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				873C4C61502241CDB1416CB2 /* shader00noInputApp.cpp in Sources */,
+				B738C80474CF4A2FB1981C44 /* shader00noInputApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

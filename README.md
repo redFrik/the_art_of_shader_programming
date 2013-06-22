@@ -14,9 +14,9 @@ workshop plan
 * basic fragment shader example (shader00noInput)
 * fragment shader with audio input (shader01audioInput)
 * opengl shapes and basic vertex shader (shader02shapeVertex)
-* redEye
+* redEye (<https://github.com/redFrik/redEye>)
 
-the workshop material on the github pages might be updated once in a while.  so it is worth checking back here a few days after the workshop.
+the workshop material on this github page might be updated once in a while.  so it is worth checking back here a few days after the workshop.
 <https://github.com/redFrik/the_art_of_shader_programming>
 
 
@@ -28,7 +28,7 @@ first we need to get the coding environments.  note: cinder doesn't have officia
 * (osx / win) download cinder (0.8.5) from <http://libcinder.org/download/>. you can put the cinder folder anywhere but i recommend in your home directory.
 * (linux) download and install processing (2.0.1) from <http://processing.org/download/>
 
-we'll also need to be able to route audio between applications (to cinder from puredata, supercollider etc.).  so if you're on osx, install soundflower and windows and linux users should install jack.
+we also need to be able to route audio between applications (to cinder from puredata, supercollider etc.).  so if you're on osx, install soundflower.  windows and linux users should install jack.
 * (osx) download and install soundflower (1.6.6b) from <http://code.google.com/p/soundflower/>
 * (win / linux) install jack from <http://jackaudio.org/download>. see also <http://jackaudio.org/jack_on_windows>
 
@@ -36,7 +36,8 @@ we'll also need to be able to route audio between applications (to cinder from p
 //--quick cinder/processing overview
 ====================================
 
-cinder <http://libcinder.org> is a c++ framework / library.
+cinder <http://libcinder.org> is a c++ framework / library.  the standard usage is to use it for coding graphics in opengl (3d) or cairo (2d).  basically cinder do all the boring tasks for you like setting up a window, refreshing the window, build a nice standalone application etc.  it also simplifies many things like mouse interaction, window resizing and cross platform builds as well as include libraries for audio, osc and opencv.
+here we will first create a simple application from scratch (instructions for xcode).
 
 first cinder application
 ------------------------
