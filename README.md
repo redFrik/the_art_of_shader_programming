@@ -32,6 +32,7 @@ we also need to be able to route audio between applications (to cinder from pure
 * (osx) download and install soundflower (1.6.6b) from <http://code.google.com/p/soundflower/>
 * (win / linux) install jack from <http://jackaudio.org/download>. see also <http://jackaudio.org/jack_on_windows>
 
+last we need a plain text editor for editing the glsl shader files.  anything will do (textedit, notepad, pico, sc) but i'll use TextWrangler available for free from here <http://www.barebones.com/products/textwrangler/download.html>.
 
 //--quick cinder/processing overview
 ====================================
@@ -75,34 +76,31 @@ first processing sketch
 //--introduction to shaders
 ===========================
 
-"The position, hue, saturation, brightness, and contrast of all pixels, vertices, or textures used to construct a final image can be altered on the fly"
+shaders are programs that run on the graphic card (GPU).  they are quite limited but can run in parallel.
 <http://en.wikipedia.org/wiki/Shader>
 
-there are a few different languages for writing shaders.
+there exist a few different languages for writing shaders.
 * glsl (opengl)
 * hlsl (directx)
 * cg (nivida's opengl+directx)
 
 here will will use glsl.  the glsl language come in different versions.  version 1.2 is the most general and compatible, while the newer version 1.3 is slowly taking over.  here we will use 1.2, but if your graphics card support 1.3 you might want to learn this instead.
 
-* vertex shader - runs once for each vertex in the shape. can be though of as the positions of the shape defining points.
-* geometry shaders - also runs once for each vertex in the shape.
-* fragment shader (pixels) - runs once for each pixel in the texture. i.e. once per frame this is run on each pixel.
-
-fragment shader are the easiest to get started with.  we will not do any geometry shaders here (they are still rare).
+* `vertex shader` - runs once for each vertex in the shape. good for changing the position and colour of individual vertices.
+* `geometry shader` - also runs once for each vertex in the shape but can add new vertices.  will will not do any geometry shaders here (they are still rare).
+* `fragment shader` (aka pixel shader) - runs once for each pixel in the texture. i.e. once per frame this is run on each pixel.
 
 * `uniform` means that it's the same for all fragments.
-* `attribute` - unique for each call (color, position, normal), the are read only and only applies for vertex shaders
+* `attribute` - unique for each call (colour, position, normal), the are read only and only applies for vertex shaders
 * `varying` - variables shared between vertex and fragment shader programs.  note that they interpolate.
 
-* `gl_Position`
 * `gl_FragColor`
-
-* `gl_Position = ftransform();` and `gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;` do the same.
+* `gl_Position`
+etc.
 
 //--basic fragment shader example
 =================================
-here's the first example using shaders.  the opengl part in cinder is very simple.  it just..
+fragment shader are the easiest to get started with.  here's the first example using shaders.  the opengl part in cinder is very simple.  it just..
 
 
 

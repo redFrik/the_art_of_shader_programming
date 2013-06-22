@@ -66,7 +66,7 @@ void shader00noInputApp::loadShader() {
     mError= "";
     try {
         mTimeFrag= fs::last_write_time(mPathFrag);
-        mShader= gl::GlslProg::create(NULL, loadFile(mPathFrag));   //only fragment
+        mShader= gl::GlslProg::create(NULL, loadFile(mPathFrag), NULL);   //only fragment
     }
     catch(gl::GlslProgCompileExc &exc) {
         mError= exc.what();
@@ -109,10 +109,12 @@ void shader00noInputApp::draw() {
     mShader->unbind();
     
     if(!mHide) {
-        gl::drawString("mode (m): "+toString(mMode), Vec2f(30.0f, getWindowHeight()-80.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("frag (f): "+toString(mPathFrag.filename()), Vec2f(30.0f, getWindowHeight()-60.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("error: "+mError, Vec2f(30.0f, getWindowHeight()-40.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("fps: "+toString(getAverageFps()), Vec2f(30.0f, getWindowHeight()-20.0f), Color(1, 1, 1), Font("Verdana", 12));
+        Color col= Color(1, 1, 1);
+        Font fnt= Font("Verdana", 12);
+        gl::drawString("mode (m): "+toString(mMode), Vec2f(30.0f, getWindowHeight()-80.0f), col, fnt);
+        gl::drawString("frag (f): "+toString(mPathFrag.filename()), Vec2f(30.0f, getWindowHeight()-60.0f), col, fnt);
+        gl::drawString("error: "+mError, Vec2f(30.0f, getWindowHeight()-40.0f), col, fnt);
+        gl::drawString("fps: "+toString(getAverageFps()), Vec2f(30.0f, getWindowHeight()-20.0f), col, fnt);
     }
 }
 

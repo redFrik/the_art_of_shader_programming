@@ -7,14 +7,14 @@
 // m - switch drawing mode
 
 //note: there need to be a folder called 'data' in the same folder as this application
-//it should include the file _default_frag.glsl
+//it should include the file _default_frag.glsl and _default_sound.aiff
 
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
 #include "cinder/Utilities.h"
 #include "cinder/Filesystem.h"
 #include "cinder/gl/GlslProg.h"
-#include "cinder/audio/FftProcessor.h"
+#include "cinder/audio/FftProcessor.h"  //osx only
 #include "cinder/audio/Input.h"
 
 using namespace ci;
@@ -28,6 +28,8 @@ public:
 	void draw();
     void keyDown(KeyEvent event);
     void loadShader();
+    void drawWaveform(bool fill);
+    void drawSpectrum(bool fill);
     
     gl::GlslProgRef         mShader;
     std::time_t             mTimeFrag;
@@ -37,29 +39,29 @@ public:
     int                     mMode;          //which shape
     
     audio::Input            mInput;
-	std::shared_ptr<float>  mFftDataRef;
+	std::shared_ptr<float>  mFftLeft;
 	audio::PcmBuffer32fRef  mPcmBuffer;
     audio::Buffer32fRef     mBufferLeft;
-    audio::Buffer32fRef     mBufferRight;
-    int                     mBufferSize;
+    uint32_t                mBufferSize;
+    float                   mAmplitude;     //amptracker
 };
 
 void shader01audioInputApp::setup() {
     
     //--defaults
-    mHide= false;   //also keydown 'i'
+    mHide= false;       //also keydown 'i'
     mError= "";
     mMode= 0;
+    mAmplitude= 0.0f;
     
     //--audio
     mInput= audio::Input();     //use default input device
     mInput.start();             //start capturing
-
+    
     //--shader
     mPathFrag= getPathDirectory(app::getAppPath().string())+"data/_default_frag.glsl";
     loadShader();
 }
-
 void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
 	if(event.getChar()=='i') {
         mHide= !mHide;
@@ -79,7 +81,7 @@ void shader01audioInputApp::loadShader() {
     mError= "";
     try {
         mTimeFrag= fs::last_write_time(mPathFrag);
-        mShader= gl::GlslProg::create(NULL, loadFile(mPathFrag));   //only fragment
+        mShader= gl::GlslProg::create(NULL, loadFile(mPathFrag), NULL);   //only fragment
     }
     catch(gl::GlslProgCompileExc &exc) {
         mError= exc.what();
@@ -88,19 +90,20 @@ void shader01audioInputApp::loadShader() {
         mError= "Unable to load shader";
     }
 }
-
 void shader01audioInputApp::update() {
     
     //--audio input
     mPcmBuffer= mInput.getPcmBuffer();
     if(mPcmBuffer) {
         mBufferSize= mPcmBuffer->getSampleCount();
-        //console()<<"mBufferSize: "<<mBufferSize<<std::endl;
+        //std::cout<<"mBufferSize: "<<mBufferSize<<std::endl;
         mBufferLeft= mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_LEFT);
-        mBufferRight= mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_RIGHT);
-        uint16_t bandCount= 512;
-        mFftDataRef= audio::calculateFft(mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_LEFT), bandCount);
-        //mFftDataRef= audio::calculateFft(mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_RIGHT), bandCount);
+        mFftLeft= audio::calculateFft(mPcmBuffer->getChannelData(audio::CHANNEL_FRONT_LEFT), mBufferSize/2);
+        mAmplitude= 0.0f;
+        for(uint32_t i= 0; i<mBufferSize; i++) {
+            mAmplitude += abs(mBufferLeft->mData[i]);
+        }
+        mAmplitude /= float(mBufferSize);   //average amplitude
     }
     
     //--shaders
@@ -108,38 +111,82 @@ void shader01audioInputApp::update() {
         loadShader();   //hot-loading shader
     }
 }
+void shader01audioInputApp::drawWaveform(bool fill) {
+    if(!mPcmBuffer) {
+        return;
+    }
+    glPushMatrix();
+    gl::translate(getWindowCenter());
+    float w= getWindowWidth();
+    float a= getWindowHeight()*0.25f;    //wave amplitude
+    PolyLine<Vec2f>	line;
+    for(uint32_t i= 0; i<mBufferSize; i++) {
+        float x= (i/(float)(mBufferSize-1))*w-(w*0.5f);
+        float y= mBufferLeft->mData[i]*a;
+        line.push_back(Vec2f(x, y));
+        if(fill) {
+            line.push_back(Vec2f(x, 0.0f-y));
+        }
+    }
+    gl::draw(line);
+    glPopMatrix();
+}
+void shader01audioInputApp::drawSpectrum(bool fill) {
+    if(!mFftLeft) {
+        return;
+    }
+    float *fftBuffer= mFftLeft.get();
+    glPushMatrix();
+    gl::translate(getWindowCenter());
+    float w= getWindowWidth();
+    float a= getWindowHeight()*0.01f;    //spectrum scale
+    uint32_t fftSize= mBufferSize/2;
+    PolyLine<Vec2f>	line;
+    for(uint32_t i= 0; i<fftSize; i++) {
+        float x= (i/(float)(fftSize-1))*w-(w*0.5f);
+        float y= fftBuffer[i]*a;
+        line.push_back(Vec2f(x, 0.0f-y));
+        if(fill) {
+            line.push_back(Vec2f(x, y));
+        }
+    }
+    gl::draw(line);
+    glPopMatrix();
+}
 
 void shader01audioInputApp::draw() {
+    
 	gl::clear(Color(0, 0, 0));
     
     mShader->bind();
     mShader->uniform("iResolution", (Vec2f)getWindowSize());
     mShader->uniform("iGlobalTime", (float)getElapsedSeconds());
+    mShader->uniform("iAmplitude", mAmplitude);
+    
     gl::color(1.0f, 1.0f, 1.0f);
     switch(mMode) {
         case 0:
-            gl::drawSolidRect(Rectf(getWindowBounds()).scaledCentered(0.8f));
+            drawWaveform(false);
             break;
         case 1:
-            gl::drawSolidTriangle(
-                                  Vec2f(getWindowCenter()*Vec2f(1.0f, 0.25f)),
-                                  Vec2f(getWindowCenter()*Vec2f(0.25f, 1.75f)),
-                                  Vec2f(getWindowCenter()*Vec2f(1.75f, 1.75f)));
+            drawWaveform(true);
             break;
         case 2:
-            gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 100);
+            drawSpectrum(false);
             break;
         case 3:
-            gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 12);
+            drawSpectrum(true);
             break;
     }
     mShader->unbind();
     
     if(!mHide) {
-        gl::drawString("mode (m): "+toString(mMode), Vec2f(30.0f, getWindowHeight()-100.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("frag (f): "+toString(mPathFrag.filename()), Vec2f(30.0f, getWindowHeight()-60.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("error: "+mError, Vec2f(30.0f, getWindowHeight()-40.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("fps: "+toString(getAverageFps()), Vec2f(30.0f, getWindowHeight()-20.0f), Color(1, 1, 1), Font("Verdana", 12));
+        Color col= Color(1, 1, 1);
+        Font fnt= Font("Verdana", 12);
+        gl::drawString("mode (m): "+toString(mMode), Vec2f(30.0f, getWindowHeight()-80.0f), col, fnt);
+        gl::drawString("frag (f): "+toString(mPathFrag.filename()), Vec2f(30.0f, getWindowHeight()-60.0f), col, fnt);
+        gl::drawString("error: "+mError, Vec2f(30.0f, getWindowHeight()-40.0f), col, fnt);
+        gl::drawString("fps: "+toString(getAverageFps()), Vec2f(30.0f, getWindowHeight()-20.0f), col, fnt);
     }
 }
 
