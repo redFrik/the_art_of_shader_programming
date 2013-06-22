@@ -8,6 +8,7 @@
 // m - switch drawing mode
 
 //note: there needs to be a folder called 'shaders' in the same folder as this application
+//it should include the two files _default_frag.glsl and _default_vert.glsl
 
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
@@ -84,7 +85,7 @@ void shader00noInputApp::loadShader() {
 
 void shader00noInputApp::update() {
     if((fs::last_write_time(mPathVert)>mTimeVert)||(fs::last_write_time(mPathFrag)>mTimeFrag)) {
-        loadShader();
+        loadShader();   //hot-loading shader
     }
 }
 
@@ -106,12 +107,10 @@ void shader00noInputApp::draw() {
                                   Vec2f(getWindowCenter()*Vec2f(1.75f, 1.75f)));
             break;
         case 2:
-            gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 12);
+            gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 100);
             break;
         case 3:
-            gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 100);
-            break;
-        default:
+            gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 12);
             break;
     }
     mShader->unbind();

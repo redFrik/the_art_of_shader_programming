@@ -180,6 +180,8 @@ resources
 * <http://www.creativeapplications.net/processing/playing-with-glsl-in-processing-initial-experiments-tutorials/>
 * <http://www.creativeapplications.net/processing/geometry-textures-shaders-processing-tutorial/>
 * <http://processing.org/tutorials/pshader/>
+* <http://thndl.com>
+* <http://atduskgreg.github.io/Processing-Shader-Examples/>
 
 //--chrome or firefox
 * <http://glsl.heroku.com/>

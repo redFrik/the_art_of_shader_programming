@@ -115,7 +115,7 @@ void shader01audioInputApp::update() {
     
     //--shaders
     if((fs::last_write_time(mPathVert)>mTimeVert)||(fs::last_write_time(mPathFrag)>mTimeFrag)) {
-        loadShader();
+        loadShader();   //hot-loading shader
     }
 }
 
@@ -137,12 +137,10 @@ void shader01audioInputApp::draw() {
                                   Vec2f(getWindowCenter()*Vec2f(1.75f, 1.75f)));
             break;
         case 2:
-            gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 12);
+            gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 100);
             break;
         case 3:
-            gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 100);
-            break;
-        default:
+            gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 12);
             break;
     }
     mShader->unbind();
