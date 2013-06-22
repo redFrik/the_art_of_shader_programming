@@ -5,12 +5,12 @@
 // f - load fragment shader
 // m - switch drawing mode
 
-//note: there needs to be a folder called 'data' in this sketch folder
+//note: there need to be a folder called 'data' in this sketch folder
 //it should include the file _default_frag.glsl
 
 PShader mShader;
 long mTimeFrag;
-String mPathFrag;
+java.io.File mPathFrag;
 boolean mHide;
 int mMode;
 
@@ -24,16 +24,15 @@ void setup() {
   ellipseMode(CENTER);
   mHide= false;  //also keydown 'i'
   mMode= 0;
-  java.io.File path= new java.io.File(dataPath("_default_frag.glsl"));
-  mPathFrag= path.getPath();
-  mShader= loadShader(mPathFrag);
-  mTimeFrag= path.lastModified();
+  mPathFrag= new java.io.File(dataPath("_default_frag.glsl"));
+  mShader= loadShader(mPathFrag.getPath());   //only fragment
+  mTimeFrag= mPathFrag.lastModified();
 }
 
 void fragLoader(File selection) {
   if(selection!=null) {
-    mPathFrag= selection.getAbsolutePath();
-    mShader= loadShader(mPathFrag);
+    mPathFrag= new java.io.File(selection.getAbsolutePath());
+    mShader= loadShader(mPathFrag.getPath());   //only fragment
   }
 }
 void keyPressed() {
@@ -45,14 +44,15 @@ void keyPressed() {
     mMode= (mMode+1)%4;
   }
 }
+
 void update() {
-  java.io.File path= new java.io.File(mPathFrag);
-  if(path.lastModified()>mTimeFrag) {  //hot-loading shader
-    mShader= loadShader(mPathFrag);
-    mTimeFrag= path.lastModified();
+  if(mPathFrag.lastModified()>mTimeFrag) {  //hot-loading shader
+    fragLoader(mPathFrag);
   }
 }
+
 void draw() {
+  
   update();
   
   background(0);
@@ -88,7 +88,7 @@ void draw() {
     fill(255);
     textSize(12);
     text("mode (m): "+mMode, 30, height-60);
-    text("frag (f): "+mPathFrag, 30, height-40);
+    text("frag (f): "+mPathFrag.getName(), 30, height-40);
     text("fps: "+frameRate, 30, height-20);
   }
 }

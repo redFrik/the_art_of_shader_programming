@@ -3,11 +3,11 @@
 //keys:
 // i - info on/off
 // esc - fullscreen on/off
-// v - load vertex shader
 // f - load fragment shader
 // m - switch drawing mode
 
-//note: there needs to be a folder called 'shaders' in the same folder as this application
+//note: there need to be a folder called 'data' in the same folder as this application
+//it should include the file _default_frag.glsl
 
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
@@ -30,9 +30,7 @@ public:
     void loadShader();
     
     gl::GlslProgRef         mShader;
-    std::time_t             mTimeVert;
     std::time_t             mTimeFrag;
-    fs::path                mPathVert;
     fs::path                mPathFrag;
     bool                    mHide;          //show/hide error and fps
     std::string             mError;
@@ -57,9 +55,8 @@ void shader01audioInputApp::setup() {
     mInput= audio::Input();     //use default input device
     mInput.start();             //start capturing
 
-    //--shaders
-    mPathVert= getPathDirectory(app::getAppPath().string())+"shaders/_default_vert.glsl";
-    mPathFrag= getPathDirectory(app::getAppPath().string())+"shaders/_default_frag.glsl";
+    //--shader
+    mPathFrag= getPathDirectory(app::getAppPath().string())+"data/_default_frag.glsl";
     loadShader();
 }
 
@@ -68,12 +65,6 @@ void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
         mHide= !mHide;
     } else if(event.getCode()==KeyEvent::KEY_ESCAPE) {
         setFullScreen(!isFullScreen());
-    } else if(event.getChar()=='v') {
-        fs::path path= getOpenFilePath(mPathVert);
-		if(!path.empty()) {
-			mPathVert= path;
-            loadShader();
-		}
     } else if(event.getChar()=='f') {
         fs::path path= getOpenFilePath(mPathFrag);
         if(!path.empty()) {
@@ -87,9 +78,8 @@ void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
 void shader01audioInputApp::loadShader() {
     mError= "";
     try {
-        mTimeVert= fs::last_write_time(mPathVert);
         mTimeFrag= fs::last_write_time(mPathFrag);
-        mShader= gl::GlslProg::create(loadFile(mPathVert), loadFile(mPathFrag));
+        mShader= gl::GlslProg::create(NULL, loadFile(mPathFrag));   //only fragment
     }
     catch(gl::GlslProgCompileExc &exc) {
         mError= exc.what();
@@ -114,7 +104,7 @@ void shader01audioInputApp::update() {
     }
     
     //--shaders
-    if((fs::last_write_time(mPathVert)>mTimeVert)||(fs::last_write_time(mPathFrag)>mTimeFrag)) {
+    if(fs::last_write_time(mPathFrag)>mTimeFrag) {
         loadShader();   //hot-loading shader
     }
 }
@@ -147,7 +137,6 @@ void shader01audioInputApp::draw() {
     
     if(!mHide) {
         gl::drawString("mode (m): "+toString(mMode), Vec2f(30.0f, getWindowHeight()-100.0f), Color(1, 1, 1), Font("Verdana", 12));
-        gl::drawString("vert (v): "+toString(mPathVert.filename()), Vec2f(30.0f, getWindowHeight()-80.0f), Color(1, 1, 1), Font("Verdana", 12));
         gl::drawString("frag (f): "+toString(mPathFrag.filename()), Vec2f(30.0f, getWindowHeight()-60.0f), Color(1, 1, 1), Font("Verdana", 12));
         gl::drawString("error: "+mError, Vec2f(30.0f, getWindowHeight()-40.0f), Color(1, 1, 1), Font("Verdana", 12));
         gl::drawString("fps: "+toString(getAverageFps()), Vec2f(30.0f, getWindowHeight()-20.0f), Color(1, 1, 1), Font("Verdana", 12));
