@@ -78,34 +78,72 @@ first processing sketch
 "The position, hue, saturation, brightness, and contrast of all pixels, vertices, or textures used to construct a final image can be altered on the fly"
 <http://en.wikipedia.org/wiki/Shader>
 
+there are a few different languages for writing shaders.
 * glsl (opengl)
 * hlsl (directx)
 * cg (nivida's opengl+directx)
 
-here will will use glsl
-
-version 1.2
-version 1.3
+here will will use glsl.  the glsl language come in different versions.  version 1.2 is the most general and compatible, while the newer version 1.3 is slowly taking over.  here we will use 1.2, but if your graphics card support 1.3 you might want to learn this instead.
 
 * vertex shader - runs once for each vertex in the shape. can be though of as the positions of the shape defining points.
 * geometry shaders - also runs once for each vertex in the shape.
 * fragment shader (pixels) - runs once for each pixel in the texture. i.e. once per frame this is run on each pixel.
 
-* `uniform` means that it's the same for all fragments
-* `attribute` - unique for each call (color, position, normal)
-* `varying` - variables shared between vertex and fragment shader programs
+fragment shader are the easiest to get started with.  we will not do any geometry shaders here (they are still rare).
+
+* `uniform` means that it's the same for all fragments.
+* `attribute` - unique for each call (color, position, normal), the are read only and only applies for vertex shaders
+* `varying` - variables shared between vertex and fragment shader programs.  note that they interpolate.
 
 * `gl_Position`
 * `gl_FragColor`
 
-
+* `gl_Position = ftransform();` and `gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;` do the same.
 
 //--basic fragment shader example
 =================================
+here's the first example using shaders.  the opengl part in cinder is very simple.  it just..
 
+
+
+#version 120
+
+uniform vec2 iResolution;
+uniform float iGlobalTime;
+
+void main() {
+    //vec4 v= vec4(gl_Vertex);
+	//v.x += iGlobalTime;
+    //gl_Position= gl_ModelViewProjectionMatrix*v;
+    gl_FrontColor = gl_Color;
+	gl_TexCoord[0] = gl_MultiTexCoord0;
+	gl_Position= ftransform();
+}
+
+
+#version 120
+
+uniform vec2 iResolution;
+uniform float iGlobalTime;
+
+void main() {
+	vec2 v= gl_FragCoord.xy-(iResolution/2.0);
+    float a= 1.0-(abs(length(v))/(iResolution.x/2.0));
+    a= clamp(a, 0.0, 1.0);
+    gl_FragColor= vec4(a*abs(sin(v.x/20.0)), 0, 0, 1.0);
+}
+
+
+now look at the files 
+00.		no input
+		play with fragment shader only
+		--iGlobalTime, iResolution
 
 //--fragment shader with audio input
 ====================================
+
+01.		audio input (mic+soundfile)
+		--iAmplitude, iSample (iNumSamples?)
 
 
 //--opengl shapes and basic vertex shader
@@ -148,4 +186,5 @@ resources
 * <https://www.shadertoy.com>
 
 //--general glsl tutorial
+* <http://nehe.gamedev.net/article/glsl_an_introduction/25007/>
 * <http://www.lighthouse3d.com/tutorials/glsl-tutorial/>
