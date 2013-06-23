@@ -7,7 +7,7 @@
 // m - switch drawing mode
 
 //note: there need to be a folder called 'data' in the same folder as this application
-//it should include the file _default_frag.glsl and _default_sound.aiff
+//it should include the file _default_frag.glsl
 
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
@@ -47,7 +47,6 @@ public:
     audio::Buffer32fRef     mBufferLeft;
     uint32_t                mBufferSize;
     float                   mAmplitude;     //amptracker
-    float			mAngle;
 };
 
 void shader01audioInputApp::setup() {
@@ -65,7 +64,6 @@ void shader01audioInputApp::setup() {
     //--shader
     mPathFrag= getPathDirectory(app::getAppPath().string())+"data/_default_frag.glsl";
     loadShader();
-    mAngle= 0.0f;
 }
 void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
 	if(event.getChar()=='i') {
@@ -138,8 +136,6 @@ void shader01audioInputApp::update() {
     if(fs::last_write_time(mPathFrag)>mTimeFrag) {
         loadShader();   //hot-loading shader
     }
-    
-    mAngle += 0.05f;
 }
 void shader01audioInputApp::drawWaveform(bool fill) {
     if(!mPcmBuffer) {

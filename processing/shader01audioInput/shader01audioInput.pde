@@ -8,11 +8,19 @@
 //note: there need to be a folder called 'data' in this sketch folder
 //it should include the file _default_frag.glsl
 
+import ddf.minim.analysis.*;
+import ddf.minim.*;
+
 PShader mShader;
 long mTimeFrag;
 java.io.File mPathFrag;
-boolean mHide;
-int mMode;
+boolean mHide;  //show/hide fps
+int mMode;      //which shape
+
+Minim minim;
+//AudioPlayer jingle;
+FFT mFftLeft;
+float mAmplitude;
 
 void setup() {
   size(640, 480, P3D);
@@ -22,8 +30,17 @@ void setup() {
   frameRate(60);
   noStroke();
   ellipseMode(CENTER);
+  
+  //--defaults
   mHide= false;  //also keydown 'i'
   mMode= 0;
+  mAmplitude= 0.0;
+  
+  //--audio
+  minim= new Minim(this);
+  mFftLeft= new FFT(2048, 44100);
+  
+  //--shader
   mPathFrag= new java.io.File(dataPath("_default_frag.glsl"));
   mShader= loadShader(mPathFrag.getPath());   //only fragment
   mTimeFrag= mPathFrag.lastModified();
@@ -41,7 +58,7 @@ void keyPressed() {
   } else if(key=='f') {
     selectInput("Select a frag glsl file:", "fragLoader");
   } else if(key=='m') {
-    mMode= (mMode+1)%4;
+    mMode= (mMode+1)%9;
   }
 }
 
@@ -51,36 +68,60 @@ void update() {
   }
 }
 
+void drawWaveform(boolean fill) {
+}
+
+void drawSpectrum(boolean fill) {
+}
+
 void draw() {
   
   update();
   
   background(0);
-  
   shader(mShader);
   mShader.set("iResolution", float(width), float(height));
   mShader.set("iGlobalTime", float(millis())*0.001);
+  mShader.set("iAmplitude", mAmplitude);
+  //mShader.set("iChannel0", 0);  //sound
+  //mShader.set("iChannel1", 1);  //fft
+  
   fill(255);
   switch(mMode) {
     case 0:
-      rect(width*0.1, height*0.1, width*0.8, height*0.8);
+      rect(0, 0, width, height);
       break;
     case 1:
+      rect(width*0.1, height*0.1, width*0.8, height*0.8);
+      break;
+    case 2:
       beginShape();
       vertex(width*0.5, height*0.125);
       vertex(width*0.125, height*0.875);
       vertex(width*0.875, height*0.875);
       endShape();
       break;
-    case 2:
+    case 3:
       ellipse(width*0.5, height*0.5, height*0.8, height*0.8);
       break;
-    case 3:
+    case 4:
       pushMatrix();
       translate(width*0.5, height*0.5);
       sphereDetail(6);
       sphere(height*0.4);
       popMatrix();
+      break;
+    case 5:
+      drawWaveform(false);
+      break;
+    case 6:
+      drawWaveform(true);
+      break;
+    case 7:
+      drawSpectrum(false);
+      break;
+    case 8:
+      drawSpectrum(true);
       break;
     }
   

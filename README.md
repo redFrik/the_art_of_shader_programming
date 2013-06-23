@@ -225,7 +225,7 @@ resources
 * <http://thndl.com>
 * <http://atduskgreg.github.io/Processing-Shader-Examples/>
 
-//--chrome or firefox
+//--webgl (chrome or firefox)
 * <http://glsl.heroku.com/>
 * <https://www.shadertoy.com>
 
