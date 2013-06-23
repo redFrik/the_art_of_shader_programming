@@ -13,7 +13,7 @@ workshop plan
 * introduction to shaders
 * basic fragment shader example (shader00noInput)
 * fragment shader with audio input (shader01audioInput)
-* opengl shapes and basic vertex shader (shader02shapeVertex)
+* opengl shapes & basic vertex shader (shader02shapeVertex)
 * redEye (<https://github.com/redFrik/redEye>)
 
 the workshop material on this github page might be updated once in a while.  so it is worth checking back here a few days after the workshop.
@@ -144,7 +144,7 @@ now look at the files
 		--iAmplitude, iSample (iNumSamples?)
 
 
-//--opengl shapes and basic vertex shader
+//--opengl shapes & basic vertex shader
 =========================================
 
 
@@ -168,6 +168,7 @@ resources
 =========
 
 //--cinder
+* <http://libcinder.org/docs/>
 * <http://forum.libcinder.org/#Forum/using-cinder>
 * <http://www.creativeapplications.net/tutorials/shaders-geometry-and-the-kinect-part-1-cinder-tutorials/>
 * <http://www.creativeapplications.net/tutorials/guide-to-meshes-in-cinder-cinder-tutorials/>

@@ -11,6 +11,7 @@
 
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
+#include "cinder/gl/Texture.h"
 #include "cinder/Utilities.h"
 #include "cinder/Filesystem.h"
 #include "cinder/gl/GlslProg.h"
@@ -31,6 +32,8 @@ public:
     void drawWaveform(bool fill);
     void drawSpectrum(bool fill);
     
+    gl::Texture             mTextureSnd;
+    gl::Texture             mTextureFft;
     gl::GlslProgRef         mShader;
     std::time_t             mTimeFrag;
     fs::path                mPathFrag;
@@ -44,6 +47,7 @@ public:
     audio::Buffer32fRef     mBufferLeft;
     uint32_t                mBufferSize;
     float                   mAmplitude;     //amptracker
+    float			mAngle;
 };
 
 void shader01audioInputApp::setup() {
@@ -61,6 +65,7 @@ void shader01audioInputApp::setup() {
     //--shader
     mPathFrag= getPathDirectory(app::getAppPath().string())+"data/_default_frag.glsl";
     loadShader();
+    mAngle= 0.0f;
 }
 void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
 	if(event.getChar()=='i') {
@@ -74,7 +79,7 @@ void shader01audioInputApp::keyDown(ci::app::KeyEvent event) {
             loadShader();
 		}
     } else if(event.getChar()=='m') {
-        mMode= (mMode+1)%4;
+        mMode= (mMode+1)%9;
     }
 }
 void shader01audioInputApp::loadShader() {
@@ -104,12 +109,37 @@ void shader01audioInputApp::update() {
             mAmplitude += abs(mBufferLeft->mData[i]);
         }
         mAmplitude /= float(mBufferSize);   //average amplitude
+        
+        Surface32f mSurfaceSnd(mBufferSize, 1, true);
+        Surface32f::Iter sndIter(mSurfaceSnd.getIter());
+        uint32_t i= 0;
+        while(sndIter.line()) {
+            while(sndIter.pixel()) {
+                sndIter.r()= mBufferLeft->mData[i];
+                i++;
+            }
+        }
+        mTextureSnd= gl::Texture(mSurfaceSnd);
+        
+        Surface32f mSurfaceFft(mBufferSize/2, 1, true);
+        Surface32f::Iter fftIter(mSurfaceFft.getIter());
+        uint32_t j= 0;
+        float *fftBuffer= mFftLeft.get();
+        while(fftIter.line()) {
+            while(fftIter.pixel()) {
+                fftIter.r()= fftBuffer[j];
+                j++;
+            }
+        }
+        mTextureFft= gl::Texture(mSurfaceFft);
     }
     
     //--shaders
     if(fs::last_write_time(mPathFrag)>mTimeFrag) {
         loadShader();   //hot-loading shader
     }
+    
+    mAngle += 0.05f;
 }
 void shader01audioInputApp::drawWaveform(bool fill) {
     if(!mPcmBuffer) {
@@ -157,28 +187,51 @@ void shader01audioInputApp::drawSpectrum(bool fill) {
 void shader01audioInputApp::draw() {
     
 	gl::clear(Color(0, 0, 0));
-    
+    mTextureSnd.bind(0);
+    mTextureFft.bind(1);
     mShader->bind();
     mShader->uniform("iResolution", (Vec2f)getWindowSize());
     mShader->uniform("iGlobalTime", (float)getElapsedSeconds());
     mShader->uniform("iAmplitude", mAmplitude);
+    mShader->uniform("iChannel0", 0);   //sound
+    mShader->uniform("iChannel1", 1);   //fft
     
     gl::color(1.0f, 1.0f, 1.0f);
     switch(mMode) {
         case 0:
-            drawWaveform(false);
+            gl::drawSolidRect(Rectf(getWindowBounds()));
             break;
         case 1:
-            drawWaveform(true);
+            gl::drawSolidRect(Rectf(getWindowBounds()).scaledCentered(0.8f));
             break;
         case 2:
-            drawSpectrum(false);
+            gl::drawSolidTriangle(
+                                  Vec2f(getWindowCenter()*Vec2f(1.0f, 0.25f)),
+                                  Vec2f(getWindowCenter()*Vec2f(0.25f, 1.75f)),
+                                  Vec2f(getWindowCenter()*Vec2f(1.75f, 1.75f)));
             break;
         case 3:
+            gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 100);
+            break;
+        case 4:
+            gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 12);   //sphere detail
+            break;
+        case 5:
+            drawWaveform(false);
+            break;
+        case 6:
+            drawWaveform(true);
+            break;
+        case 7:
+            drawSpectrum(false);
+            break;
+        case 8:
             drawSpectrum(true);
             break;
     }
     mShader->unbind();
+    mTextureSnd.unbind();
+    mTextureFft.unbind();
     
     if(!mHide) {
         Color col= Color(1, 1, 1);

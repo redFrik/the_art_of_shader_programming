@@ -59,7 +59,7 @@ void shader00noInputApp::keyDown(ci::app::KeyEvent event) {
             loadShader();
 		}
     } else if(event.getChar()=='m') {
-        mMode= (mMode+1)%4;
+        mMode= (mMode+1)%5;
     }
 }
 void shader00noInputApp::loadShader() {
@@ -91,18 +91,21 @@ void shader00noInputApp::draw() {
     gl::color(1.0f, 1.0f, 1.0f);
     switch(mMode) {
         case 0:
-            gl::drawSolidRect(Rectf(getWindowBounds()).scaledCentered(0.8f));
+            gl::drawSolidRect(Rectf(getWindowBounds()));
             break;
         case 1:
+            gl::drawSolidRect(Rectf(getWindowBounds()).scaledCentered(0.8f));
+            break;
+        case 2:
             gl::drawSolidTriangle(
                                   Vec2f(getWindowCenter()*Vec2f(1.0f, 0.25f)),
                                   Vec2f(getWindowCenter()*Vec2f(0.25f, 1.75f)),
                                   Vec2f(getWindowCenter()*Vec2f(1.75f, 1.75f)));
             break;
-        case 2:
+        case 3:
             gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 100);
             break;
-        case 3:
+        case 4:
             gl::drawSphere((Vec3f)getWindowCenter(), getWindowHeight()*0.4f, 12);
             break;
     }
