@@ -139,26 +139,46 @@ note: the above is far from complete.  for a much better reference see page 3 an
 //--basic fragment shader example
 =================================
 
-fragment shader are the easiest to get started with.  here's the first cinder / processing example using shaders.  open the xcode file `shader00noInput.xcodeproj` or the sketch `shader00noInput.pde`.
+fragment shader are the easiest to get started with.  here's the first cinder / processing example using shaders.
 
-* run and press 'f' to load a fragment shader from the data folder.
-* try different ones (colors00_frag.glsl, colors01_frag.glsl, etc) and also look at the glsl files in a text editor.
-* make a save as of one you like and load it.  now you can edit this glsl fragment shader as the program is running.  every time you save, the changes will noticed and the shader automatically reloaded.  if you make an error cinder will display it (processing not).
+* open and run the xcode file `shader00noInput.xcodeproj` or the sketch `shader00noInput.pde`.  note: if something doesn't work, see under 'troubleshooting' below.
+* press 'f' to load a fragment shader from the data folder.  try different ones (colors00_frag.glsl, colors01_frag.glsl, etc) and also look at the glsl files in a text editor.
+* make a save as of one you like and press 'f' to load it.  now you can edit this glsl fragment shader with a text editor as the program is running.  every time you save, the changes will noticed and the shader automatically reloaded.  if you make an error cinder will display it (processing not).
 * press 'i' to show / hide the info text.
-* press 'esc' for full screen.
+* press 'esc' for full screen (cinder only).
 * press 'm' to toggle different shapes (draw mode).
 
-so the program itself is very simple.  the main feature is to draw one out of a few simple shapes in opengl, apply the fragment shader and set the uniform variables.  the additional stuff is about detecting key presses, displaying text info and hot-loading the shader.
+so the main program itself is very simple.  it just draws one out of a few simple shapes in opengl, applies the fragment shader and sets the uniform variables.  the additional code in there is about detecting key presses, displaying text info and hot-loading the shader.
+if you're comfortable with opengl you can change some things in the main code as well.  use it as a template.
 there are only two uniform variables in this first example: iGlobalTime and iResolution.  iGlobalTime is useful for driving animation and iResolution for normalizing xy positions (0-1).
 
-![shader00noInput04](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader00noInput04.png)
-![shader00noInput06](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader00noInput06.png)
+![shader00noInput_colors04](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader00noInput_colors04.png)
+![shader00noInput_colors06](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader00noInput_colors06.png)
 
 //--fragment shader with audio input
 ====================================
 
-01.		audio input (mic+soundfile)
-		--iAmplitude, iSample (iNumSamples?)
+the second example is a bit more involved but still deals only with fragment shaders.  it takes audio input from the default audio input device and sends data (fft, amplitude, raw samples) to the fragment shader.
+
+* first make sure some sound is coming in.  either via the built-in microphone or via the line-in.
+* open and run the xcode file `shader01audioInput.xcodeproj` or the sketch `shader01audioInput.pde`.
+* tap the mic and you should see something happening on the screen (by default a red rectangle connected to amplitude).
+* press 'f' to load a fragment shader from the data folder.  try different ones (the amp, fft and snd ones) and also look at the glsl files in a text editor.
+* make a save as of one you like and press 'f' to load it.
+
+in this example the main program is a little bit more complex.  there are new drawing modes (key 'm') for drawing the raw sound input data as well as the fft spectrum in different ways.  and of course the parts dealing with audio buffers, analysis, fft and textures is new.  you can ignore it for now.
+the new really useful features are the three uniform variables: iAmplitude, iChannel0 and iChannel1.  iAmplitude is tracks amplitude (default buffersize is 2048 and that's used here).  iChannel0 is the raw audio samples as a texture (2048x1 by default) and iChannel1 contains a texture with the fft of the same data (1024x1 by default).
+btw, the names iChannel0, iGlobalTime etc. were chosen to match the ones found in shadertoy.com.
+
+* now select soundflower as audio input and audio output (in system preferences on osx).
+* start some sound synthesis program (supercollider or puredata) and make sure it is generating sound and outputting to soundflower.
+* restart the shader01audioInput and you should see the program reacting to the sounds made with the sound synthesis program.
+* start soundflowerbed and select 'built-in output' in the menu if you want to hear it at the same time.  note that the shader01audioInput only reads the left channel and that you might want to play with system volume to adjust the loudness of the audio.  it might make a huge difference for the graphics in shader01audioInput.  also what type of sounds you play will make a difference visually.  simple synthetic sounds that move around in frequency usually will look the best.
+
+![shader01audioInput_amp02](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader01audioInput_amp02.png)
+![shader01audioInput_fft01](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader01audioInput_fft01.png)
+![shader01audioInput_fft02](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader01audioInput_fft02.png)
+![shader01audioInput_fft03](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader01audioInput_fft03.png)
 
 
 //--opengl shapes & basic vertex shader

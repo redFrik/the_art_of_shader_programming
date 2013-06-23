@@ -7,5 +7,5 @@ uniform sampler2D iChannel0;	//sound
 uniform sampler2D iChannel1;	//fft
 
 void main() {
-    gl_FragColor= vec4(1.0, 0.0, 0.0, 1.0);		//make everything red
+    gl_FragColor= vec4(iAmplitude, 0.0, 0.0, 1.0);		//make everything red when amplitude
 }

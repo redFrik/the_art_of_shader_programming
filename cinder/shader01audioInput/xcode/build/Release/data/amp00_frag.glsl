@@ -7,6 +7,7 @@ uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 
 void main() {
+	vec2 vu= gl_FragCoord.xy;
 	float r= iAmplitude;
-	gl_FragColor= vec4(r, 0.0, 0.0, 1.0);
+	gl_FragColor= vec4(sin(r*vu.x)*0.5+0.5, sin(r*vu.y)*0.5+0.5, 0.0, 1.0);
 }
