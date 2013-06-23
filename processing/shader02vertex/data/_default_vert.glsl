@@ -2,8 +2,13 @@
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;
+uniform float iAmplitude;
+uniform sampler2D iChannel0;	//sound
+uniform sampler2D iChannel1;	//fft
+
+uniform mat4 transform;
+attribute vec4 vertex;
 
 void main() {
-    vec4 v= vec4(gl_Vertex);
-    gl_Position= gl_ModelViewProjectionMatrix*v;	//same as gl_Position= ftransform();
+	gl_Position= transform*vertex;
 }

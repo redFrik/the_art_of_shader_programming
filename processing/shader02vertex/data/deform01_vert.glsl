@@ -11,11 +11,7 @@ attribute vec4 vertex;
 
 void main() {
     vec4 v= vec4(vertex);
-    mat4 m= mat4(
-    	1.0, 0.0, 0.0, 0.0,
-    	0.0, 1.0, 0.0, 0.0,
-    	0.0, 0.0, 1.0, 0.0,
-    	0.0, 0.0, 0.0, sin(iGlobalTime)+2.0
-    );
-    gl_Position= transform*v*m;
+    v.x= v.x+(sin(v.x+iAmplitude)*100.0);
+    v.y= v.y+(cos(v.y+iAmplitude)*80.0);
+    gl_Position= transform*v;
 }
