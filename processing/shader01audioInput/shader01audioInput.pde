@@ -11,6 +11,8 @@
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 
+PImage mTextureSnd;
+PImage mTextureFft;
 PShader mShader;
 long mTimeFrag;
 java.io.File mPathFrag;
@@ -18,9 +20,11 @@ boolean mHide;  //show/hide fps
 int mMode;      //which shape
 
 Minim minim;
-//AudioPlayer jingle;
+AudioInput mInput;
+float[] mBufferLeft;
 FFT mFftLeft;
-float mAmplitude;
+int mBufferSize;
+float mAmplitude;  //amptracker
 
 void setup() {
   size(640, 480, P3D);
@@ -28,8 +32,9 @@ void setup() {
     frame.setResizable(true);
   }
   frameRate(60);
-  noStroke();
+  smooth(8);
   ellipseMode(CENTER);
+  noStroke();
   
   //--defaults
   mHide= false;  //also keydown 'i'
@@ -38,12 +43,19 @@ void setup() {
   
   //--audio
   minim= new Minim(this);
-  mFftLeft= new FFT(2048, 44100);
+  mInput= minim.getLineIn();  //use default input device
+  mBufferSize= mInput.bufferSize();
+  println("mBufferSize: "+mBufferSize);
+  mFftLeft= new FFT(mBufferSize, mInput.sampleRate());
+  mBufferLeft= new float[mBufferSize];
   
   //--shader
   mPathFrag= new java.io.File(dataPath("_default_frag.glsl"));
   mShader= loadShader(mPathFrag.getPath());   //only fragment
   mTimeFrag= mPathFrag.lastModified();
+  mTextureSnd= createImage(mBufferSize, 1, RGB);
+  mTextureFft= createImage(mFftLeft.specSize()-1, 1, RGB);
+  println("fftSize: "+mFftLeft.specSize());
 }
 
 void fragLoader(File selection) {
@@ -63,15 +75,62 @@ void keyPressed() {
 }
 
 void update() {
+  
+  //--audio input
+  mAmplitude= 0.0;
+  mTextureSnd.loadPixels();
+  for(int i= 0; i<mBufferSize; i++) {
+    float sample= mInput.left.get(i);
+    mBufferLeft[i]= sample;
+    mAmplitude += abs(sample);
+    mTextureSnd.pixels[i]= color(max(0.0, sample)*255.0); 
+  }
+  mTextureSnd.updatePixels();
+  mAmplitude /= float(mBufferSize);  //average amplitude
+  
+  mFftLeft.forward(mInput.left);
+  mTextureFft.loadPixels();
+  for(int i= 0; i<(mFftLeft.specSize()-1); i++) {
+    float sample= mFftLeft.getBand(i);
+    mTextureFft.pixels[i]= color(min(255.0, sample*8.0));
+  }
+  mTextureFft.updatePixels();
+  
+  //--shaders
   if(mPathFrag.lastModified()>mTimeFrag) {  //hot-loading shader
     fragLoader(mPathFrag);
   }
 }
-
 void drawWaveform(boolean fill) {
+  pushMatrix();
+  translate(width*0.5, height*0.5);
+  float a= height*0.25;              //wave amplitude
+  for(int i= 0; i<mBufferSize; i++) {
+    float x= (i/(float)(mBufferSize-1))*width-(width*0.5);
+    float y= mBufferLeft[i]*a;
+    rect(x, 0, 1, y);
+    if(fill) {
+      rect(x, 0, 1, 0.0-y);
+    }
+  }
+  popMatrix();
 }
 
 void drawSpectrum(boolean fill) {
+  pushMatrix();
+  translate(width*0.5, height*0.5);
+  float a= height*0.01;              //spectrum scale
+  int fftSize= mFftLeft.specSize()-1;
+  for(int i= 0; i<fftSize; i++) {
+    float x= (i/(float)(fftSize-1))*width-(width*0.5);
+    float y= mFftLeft.getBand(i)*a;
+    rect(x, 0, 1, 0.0-y);
+    if(fill) {
+      rect(x, 0, 1, y);
+    }
+  }
+  endShape();
+  popMatrix();
 }
 
 void draw() {
@@ -83,8 +142,8 @@ void draw() {
   mShader.set("iResolution", float(width), float(height));
   mShader.set("iGlobalTime", float(millis())*0.001);
   mShader.set("iAmplitude", mAmplitude);
-  //mShader.set("iChannel0", 0);  //sound
-  //mShader.set("iChannel1", 1);  //fft
+  mShader.set("iChannel0", mTextureSnd);  //sound
+  mShader.set("iChannel1", mTextureFft);  //fft
   
   fill(255);
   switch(mMode) {

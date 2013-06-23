@@ -20,8 +20,10 @@ void setup() {
     frame.setResizable(true);
   }
   frameRate(60);
-  noStroke();
+  smooth(8);
   ellipseMode(CENTER);
+  noStroke();
+  
   mHide= false;  //also keydown 'i'
   mMode= 0;
   mPathFrag= new java.io.File(dataPath("_default_frag.glsl"));
