@@ -190,6 +190,7 @@ btw, the names iChannel0, iGlobalTime etc. were chosen to match the ones found i
 //--opengl shapes & basic vertex shader
 =========================================
 
+* open and run the xcode file `shader02vertex.xcodeproj` or the sketch `shader02vertex.pde`.
 
 //--redEye
 ==========

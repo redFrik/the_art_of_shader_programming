@@ -1,3 +1,4 @@
 
 cinder/shader00noInput/xcode/build/shader00noInput.build
 cinder/shader01audioInput/xcode/build/shader01audioInput.build
+cinder/shader02vertex/xcode/build/shader02vertex.build

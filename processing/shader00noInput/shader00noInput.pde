@@ -28,12 +28,12 @@ void setup() {
   mMode= 0;
   mPathFrag= new java.io.File(dataPath("_default_frag.glsl"));
   mShader= loadShader(mPathFrag.getPath());   //only fragment
-  mTimeFrag= mPathFrag.lastModified();
 }
 
 void fragLoader(File selection) {
   if(selection!=null) {
     mPathFrag= new java.io.File(selection.getAbsolutePath());
+    mTimeFrag= mPathFrag.lastModified();
     mShader= loadShader(mPathFrag.getPath());   //only fragment
   }
 }

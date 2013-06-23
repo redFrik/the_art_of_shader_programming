@@ -3,10 +3,11 @@
 //keys:
 // i - info on/off
 // f - load fragment shader
+// v - load vertex shader
 // m - switch drawing mode
 
 //note: there need to be a folder called 'data' in this sketch folder
-//it should include the file _default_frag.glsl
+//it should include the files _default_frag.glsl and _default_vert.glsl
 
 import ddf.minim.analysis.*;
 import ddf.minim.*;
@@ -15,7 +16,9 @@ PImage mTextureSnd;
 PImage mTextureFft;
 PShader mShader;
 long mTimeFrag;
+long mTimeVert;
 java.io.File mPathFrag;
+java.io.File mPathVert;
 boolean mHide;  //show/hide fps
 int mMode;      //which shape
 
@@ -51,7 +54,8 @@ void setup() {
   
   //--shader
   mPathFrag= new java.io.File(dataPath("_default_frag.glsl"));
-  mShader= loadShader(mPathFrag.getPath());   //only fragment
+  mPathVert= new java.io.File(dataPath("_default_vert.glsl"));
+  shaderLoader();
   mTextureSnd= createImage(mBufferSize, 1, RGB);
   mTextureFft= createImage(mFftLeft.specSize()-1, 1, RGB);
   println("fftSize: "+mFftLeft.specSize());
@@ -60,15 +64,27 @@ void setup() {
 void fragLoader(File selection) {
   if(selection!=null) {
     mPathFrag= new java.io.File(selection.getAbsolutePath());
-    mTimeFrag= mPathFrag.lastModified();
-    mShader= loadShader(mPathFrag.getPath());   //only fragment
+    shaderLoader();
   }
+}
+void vertLoader(File selection) {
+  if(selection!=null) {
+    mPathVert= new java.io.File(selection.getAbsolutePath());
+    shaderLoader();
+  }
+}
+void shaderLoader() {
+  mShader= loadShader(mPathFrag.getPath(), mPathVert.getPath());
+  mTimeFrag= mPathFrag.lastModified();
+  mTimeVert= mPathVert.lastModified();
 }
 void keyPressed() {
   if(key=='i') {
     mHide= !mHide;
   } else if(key=='f') {
     selectInput("Select a frag glsl file:", "fragLoader");
+  } else if(key=='v') {
+    selectInput("Select a vert glsl file:", "vertLoader");
   } else if(key=='m') {
     mMode= (mMode+1)%9;
   }
@@ -97,8 +113,8 @@ void update() {
   mTextureFft.updatePixels();
   
   //--shaders
-  if(mPathFrag.lastModified()>mTimeFrag) {  //hot-loading shader
-    fragLoader(mPathFrag);
+  if((mPathFrag.lastModified()>mTimeFrag) || (mPathVert.lastModified()>mTimeVert)) {  //hot-loading shader
+    shaderLoader();
   }
 }
 void drawWaveform(boolean fill) {
@@ -187,8 +203,9 @@ void draw() {
   if(!mHide) {
     fill(255);
     textSize(12);
-    text("mode (m): "+mMode, 30, height-60);
-    text("frag (f): "+mPathFrag.getName(), 30, height-40);
+    text("mode (m): "+mMode, 30, height-80);
+    text("frag (f): "+mPathFrag.getName(), 30, height-60);
+    text("vert (v): "+mPathVert.getName(), 30, height-40);
     text("fps: "+frameRate, 30, height-20);
   }
 }
