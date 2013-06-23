@@ -16,14 +16,13 @@ workshop plan
 * opengl shapes & basic vertex shader (shader02shapeVertex)
 * redEye (<https://github.com/redFrik/redEye>)
 
-the workshop material on this github page might be updated once in a while.  so it is worth checking back here a few days after the workshop.
-<https://github.com/redFrik/the_art_of_shader_programming>
+the workshop material on this github page (<https://github.com/redFrik/the_art_of_shader_programming>) might be updated once in a while.  so it is worth checking back here a few days after the workshop.
 
 
 //--installing software
 =======================
 
-first we need to get the coding environments.  note: cinder doesn't have official support for linux, so if you're running linux install processing instead.
+first we need to get the coding environments.  note: cinder doesn't have official support for linux, so if you're running linux install processing instead.  the examples in the processing folder will be equivalent.
 * (osx / win) download and install xcode (4.6.3) form <https://developer.apple.com/xcode/>
 * (osx / win) download cinder (0.8.5) from <http://libcinder.org/download/>. you can put the cinder folder anywhere but i recommend in your home directory.
 * (linux) download and install processing (2.0.1) from <http://processing.org/download/>
@@ -32,12 +31,12 @@ we also need to be able to route audio between applications (to cinder from pure
 * (osx) download and install soundflower (1.6.6b) from <http://code.google.com/p/soundflower/>
 * (win / linux) install jack from <http://jackaudio.org/download>. see also <http://jackaudio.org/jack_on_windows>
 
-last we need a plain text editor for editing the glsl shader files.  anything will do (textedit, notepad, pico, sc) but i'll use TextWrangler available for free from here <http://www.barebones.com/products/textwrangler/download.html>.
+last we need a plain text editor for editing the glsl shader files.  anything will do (textedit, notepad, pico, supercollider etc.).  on osx TextWrangler is a good option and available for free from here <http://www.barebones.com/products/textwrangler/download.html>.
 
-//--quick cinder/processing overview
-====================================
+//--quick cinder / processing overview
+======================================
 
-cinder <http://libcinder.org> is a c++ framework / library.  the standard usage is to use it for coding graphics in opengl (3d) or cairo (2d).  basically cinder do all the boring tasks for you like setting up a window, refreshing the window, build a nice standalone application etc.  it also simplifies many things like mouse interaction, window resizing and cross platform builds as well as include libraries for audio, osc and opencv.
+cinder (<http://libcinder.org>) is a c++ framework / library.  the standard usage is for coding graphics in opengl (3d) or cairo (2d).  basically cinder do all the boring tasks for you like setting up a window, refreshing the window, build a nice standalone application etc.  it also simplifies many things like mouse interaction, window resizing and cross platform builds as well as include libraries for audio, osc and opencv.
 here we will first create a simple application from scratch (instructions for xcode).
 
 first cinder application
@@ -76,7 +75,7 @@ first processing sketch
 //--introduction to shaders
 ===========================
 
-shaders are programs that run on the graphic card (GPU).  they are quite limited but can run in parallel.
+shaders are programs that run on the graphic card (GPU).  they are quite limited in what they can do, but on the other hand they run in parallel.
 <http://en.wikipedia.org/wiki/Shader>
 
 there exist a few different languages for writing shaders.
@@ -84,19 +83,54 @@ there exist a few different languages for writing shaders.
 * hlsl (directx)
 * cg (nivida's opengl+directx)
 
-here will will use glsl.  the glsl language come in different versions.  version 1.2 is the most general and compatible, while the newer version 1.3 is slowly taking over.  here we will use 1.2, but if your graphics card support 1.3 you might want to learn this instead.
+here will will use glsl.  the glsl language in turn comes in different versions.  version 1.2 is the most general and compatible, while the newer version 1.3 is slowly taking over.  here we will use 1.2, but if your graphic card supports 1.3, you might want to learn this instead.
 
-* `vertex shader` - runs once for each vertex in the shape. good for changing the position and colour of individual vertices.
-* `geometry shader` - also runs once for each vertex in the shape but can add new vertices.  will will not do any geometry shaders here (they are still rare).
-* `fragment shader` (aka pixel shader) - runs once for each pixel in the texture. i.e. once per frame this is run on each pixel.
+basically there are 3 types of shader programs.  you can use or leave them out as you like.  they have different purposes and are executed in order.  first vertex, then geometry and last fragment.
 
-* `uniform` means that it's the same for all fragments.
-* `attribute` - unique for each call (colour, position, normal), the are read only and only applies for vertex shaders
-* `varying` - variables shared between vertex and fragment shader programs.  note that they interpolate.
+* `vertex shader` - runs once for each vertex in a shape. good for changing the position and colour of individual vertices.
+* `geometry shader` - also runs once for each vertex in the shape a can add new vertices.  we will not do any geometry shaders here (they are still rare and require a modern graphic card to run).
+* `fragment shader` (a.k.a. `pixel shader`) - runs once for each pixel in the rasterized shape.  i.e. once per frame this is run for each output pixel.
 
-* `gl_FragColor`
-* `gl_Position`
-etc.
+fragment shaders are probably the easiest to get started with and we will do that here as well.  to get a quick taste of how it works go to <https://www.shadertoy.com> and click 'new shader'.  what you see is a fragment shader acting upon a solid rectangle.
+you can play around with the code and press play to see the changes.
+
+there are some special concepts in shader programming.  variables for instance can be of the following...
+
+* `uniform` - means that this variable is an input and will be the same for all fragments.  typically used to send in textures or time parameters to the shader programs.
+* `attribute` - a variable that will be unique for each shader program (typically vertex colour, vertex position,  vertex normal). these are read only and only applies for vertex shaders.
+* `varying` - these are variables that are shared between vertex and fragment shader programs.  note that they interpolate.
+
+available variable types include...
+
+* `float` - floating point values.
+* `vec2`, `vec3`, `vec4` - vectors of different dimensions.
+* `mat2`, `mat3` - matrices of different dimensions.
+* `sample` - textures.
+
+and there are special hardcoded variables.  like these...
+
+* `gl_FragColor` - fragment colour as a vec4 (r, g, b, a).
+* `gl_Position` - vertex position as a vec4.
+* `gl_ModelViewProjectionMatrix` - current view matrix.
+
+and built-in methods like...
+
+* `mod`, `floor`, `frac`, `abs`, `max`, `min` - some of the available math functions.
+* `sin`, `cos`, `atan`, `pow` - more math functions.
+* `step`, `smoothstep` - thresholds.
+* `clamp` - clipping.
+* `mix` - blending.
+* `texture2D` - read a value from a 2d texture.
+* `vec2`, `vec3`, `vec4` - for creating new vectors.
+* `length` - magnitude of a vector.
+
+creating and accessing values in a vector is done like this...
+<code>
+vec4 col= vec4(0.2, 0.3, 0.4, 1.0);
+float r= col.r;
+float g= col.g;
+float b= col.b;
+</code>
 
 //--basic fragment shader example
 =================================
