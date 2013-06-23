@@ -11,6 +11,8 @@ attribute vec4 vertex;
 
 void main() {
     vec4 v= vec4(vertex);
-    v.x= v.x+texture2D(iChannel0, v.xy).x*100.0;
+    vec2 a= v.xy/iResolution;
+    a= step(0.1, abs(a))*0.5;
+    v.xy *= a.xy;
     gl_Position= transform*v;
 }

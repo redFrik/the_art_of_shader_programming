@@ -8,6 +8,6 @@ uniform sampler2D iChannel1;	//fft
 
 void main() {
     vec4 v= vec4(gl_Vertex);
-    v.x= v.x+texture2D(iChannel0, v.xy).x*100.0;
+    v.xy= v.xy-mod(v.xy, 10.0);
     gl_Position= gl_ModelViewProjectionMatrix*v;
 }

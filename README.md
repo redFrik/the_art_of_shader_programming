@@ -195,19 +195,19 @@ vertex shaders are different from the fragment shaders we used so far.  they dea
 
 * open and run the xcode file `shader02vertex.xcodeproj` or the sketch `shader02vertex.pde`.
 * press 'v' to load a vertex shader from the data folder.  try different ones (position) and also look at the glsl files in a text editor.
-* make a copy of one you like and press 'v' to load it.
-* you can also load fragment shaders like before and use audio input.
+* make a copy of one you like and press 'v' to load it.  change things and experiment.
+* remember you can also load fragment shaders like before and use audio input.
 
 ![shader02vertex_deform03](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader02vertex_deform03.png)
+![shader02vertex_quantize02](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader02vertex_quantize02.png)
+
 
 //--redEye
 ==========
 
-work in progress...
+a visualiser with audio and osc input.  based on the examples above.  work in progress...
 
 <https://github.com/redFrik/redEye>
-
-a visualiser with audio and osc input.  based on the examples above.
 
 
 troubleshooting
