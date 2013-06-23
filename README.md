@@ -94,20 +94,20 @@ basically there are 3 types of shader programs.  you can use or leave them out a
 fragment shaders are probably the easiest to get started with and we will do that here as well.  to get a quick taste of how it works go to <https://www.shadertoy.com> and click 'new shader'.  what you see is a fragment shader acting upon a solid rectangle.
 you can play around with the code and press play to see the changes.
 
-there are some special concepts in shader programming.  variables for instance can be of the following...
+there are some special concepts in shader programming.  variables for instance can have of the following 'storage qualifiers'...
 
 * `uniform` - means that this variable is an input and will be the same for all fragments.  typically used to send in textures or time parameters to the shader programs.
 * `attribute` - a variable that will be unique for each shader program (typically vertex colour, vertex position,  vertex normal). these are read only and only applies for vertex shaders.
 * `varying` - these are variables that are shared between vertex and fragment shader programs.  note that they interpolate.
 
-available variable types include...
+available variable types include (only the more common ones)...
 
 * `float` - floating point values.
 * `vec2`, `vec3`, `vec4` - vectors of different dimensions.
-* `mat2`, `mat3` - matrices of different dimensions.
-* `sample` - textures.
+* `mat2`, `mat3`, `mat4` - matrices of different dimensions.
+* `sample2D` - textures.
 
-and there are special hardcoded variables.  like these...
+and there are special hardcoded variables (constants, inputs, outputs).  they include...
 
 * `gl_FragColor` - fragment colour as a vec4 (r, g, b, a).
 * `gl_Position` - vertex position as a vec4.
@@ -123,6 +123,7 @@ and built-in methods like...
 * `texture2D` - read a value from a 2d texture.
 * `vec2`, `vec3`, `vec4` - for creating new vectors.
 * `length` - magnitude of a vector.
+* `distance` - distance between two points.
 
 creating and accessing values in a vector is done like this...
 <code>
@@ -132,44 +133,26 @@ float g= col.g;
 float b= col.b;
 </code>
 
+note: the above is far from complete.  for a much better reference see page 3 and 4 of here... <http://www.khronos.org/opengles/sdk/docs/reference_cards/OpenGL-ES-2_0-Reference-card.pdf>
+
+
 //--basic fragment shader example
 =================================
-fragment shader are the easiest to get started with.  here's the first example using shaders.  the opengl part in cinder is very simple.  it just..
 
+fragment shader are the easiest to get started with.  here's the first cinder / processing example using shaders.  open the xcode file `shader00noInput.xcodeproj` or the sketch `shader00noInput.pde`.
 
+* run and press 'f' to load a fragment shader from the data folder.
+* try different ones (colors00_frag.glsl, colors01_frag.glsl, etc) and also look at the glsl files in a text editor.
+* make a save as of one you like and load it.  now you can edit this glsl fragment shader as the program is running.  every time you save, the changes will noticed and the shader automatically reloaded.  if you make an error cinder will display it (processing not).
+* press 'i' to show / hide the info text.
+* press 'esc' for full screen.
+* press 'm' to toggle different shapes (draw mode).
 
-#version 120
+so the program itself is very simple.  the main feature is to draw one out of a few simple shapes in opengl, apply the fragment shader and set the uniform variables.  the additional stuff is about detecting key presses, displaying text info and hot-loading the shader.
+there are only two uniform variables in this first example: iGlobalTime and iResolution.  iGlobalTime is useful for driving animation and iResolution for normalizing xy positions (0-1).
 
-uniform vec2 iResolution;
-uniform float iGlobalTime;
-
-void main() {
-    //vec4 v= vec4(gl_Vertex);
-	//v.x += iGlobalTime;
-    //gl_Position= gl_ModelViewProjectionMatrix*v;
-    gl_FrontColor = gl_Color;
-	gl_TexCoord[0] = gl_MultiTexCoord0;
-	gl_Position= ftransform();
-}
-
-
-#version 120
-
-uniform vec2 iResolution;
-uniform float iGlobalTime;
-
-void main() {
-	vec2 v= gl_FragCoord.xy-(iResolution/2.0);
-    float a= 1.0-(abs(length(v))/(iResolution.x/2.0));
-    a= clamp(a, 0.0, 1.0);
-    gl_FragColor= vec4(a*abs(sin(v.x/20.0)), 0, 0, 1.0);
-}
-
-
-now look at the files 
-00.		no input
-		play with fragment shader only
-		--iGlobalTime, iResolution
+![shader00noInput04](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader00noInput04.png)
+![shader00noInput06](https://raw.github.com/redFrik/the_art_of_shader_programming/master/shader00noInput06.png)
 
 //--fragment shader with audio input
 ====================================
