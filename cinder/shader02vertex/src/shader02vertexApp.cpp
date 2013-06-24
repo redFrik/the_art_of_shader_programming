@@ -213,9 +213,9 @@ void shader02vertexApp::draw() {
             break;
         case 2:
             gl::drawSolidTriangle(
-                                  Vec2f(getWindowCenter()*Vec2f(1.0f, 0.25f)),
-                                  Vec2f(getWindowCenter()*Vec2f(0.25f, 1.75f)),
-                                  Vec2f(getWindowCenter()*Vec2f(1.75f, 1.75f)));
+                                  getWindowCenter()*Vec2f(1.0f, 0.25f),
+                                  getWindowCenter()*Vec2f(0.25f, 1.75f),
+                                  getWindowCenter()*Vec2f(1.75f, 1.75f));
             break;
         case 3:
             gl::drawSolidCircle(getWindowCenter(), getWindowHeight()*0.4f, 100);
