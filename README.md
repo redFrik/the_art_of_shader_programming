@@ -87,7 +87,7 @@ there exist a few different languages for writing shaders:
 * cg (nivida's opengl+directx)
 * arb (outdated assembly language)
 
-here will will use glsl.  the glsl language in turn comes in different versions.  version 1.2 is the most general and compatible, while the newer version 1.3 is slowly taking over.  here we will use 1.2, but if your graphic card supports 1.3, you might want to learn this instead.
+here we will use glsl.  the glsl language in turn comes in different versions.  version 1.2 is the most general and compatible, while the newer version 1.3 is slowly taking over.  here we will use 1.2, but if your graphic card supports 1.3, you might want to learn this instead.
 
 basically there are 3 types of shader programs.  you can use or leave them out as you like.  they have different purposes and are executed in order.  first vertex, then geometry and last fragment.
 
