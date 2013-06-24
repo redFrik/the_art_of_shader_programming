@@ -207,7 +207,10 @@ vertex shaders are different from the fragment shaders we used so far.  they dea
 
 a visualiser with audio and osc input.  based on the examples above.  work in progress...
 
-<https://github.com/redFrik/redEye>
+* download it from <https://github.com/redFrik/redEye>.
+* open the supercollider file `redEye_test.scd` to see some of the available osc commands.
+
+![redEye00](https://raw.github.com/redFrik/the_art_of_shader_programming/master/redEye00.png)
 
 
 troubleshooting
