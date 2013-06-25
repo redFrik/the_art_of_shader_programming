@@ -1,4 +1,4 @@
-#define PROCESSING_COLOR_SHADER
+#version 120
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;

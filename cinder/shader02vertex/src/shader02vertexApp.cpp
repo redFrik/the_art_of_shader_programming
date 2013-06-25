@@ -29,6 +29,8 @@ public:
 	void update();
 	void draw();
     void keyDown(KeyEvent event);
+    void mouseDown(MouseEvent event);
+    void mouseDrag(MouseEvent event);
     void loadShader();
     void drawWaveform(bool fill);
     void drawSpectrum(bool fill);
@@ -50,6 +52,7 @@ public:
     audio::Buffer32fRef     mBufferLeft;
     uint32_t                mBufferSize;
     float                   mAmplitude;     //amptracker
+    Vec2f                   mMouse;
 };
 
 void shader02vertexApp::setup() {
@@ -59,6 +62,7 @@ void shader02vertexApp::setup() {
     mError= "";
     mMode= 0;
     mAmplitude= 0.0f;
+    mMouse= Vec2f(0.0f, 0.0f);
     
     //--audio
     mInput= audio::Input();     //use default input device
@@ -90,6 +94,13 @@ void shader02vertexApp::keyDown(ci::app::KeyEvent event) {
         mMode= (mMode+1)%9;
     }
 }
+void shader02vertexApp::mouseDown(MouseEvent event) {
+    mMouse= event.getPos();
+}
+void shader02vertexApp::mouseDrag(MouseEvent event) {
+    mMouse= event.getPos();
+}
+
 void shader02vertexApp::loadShader() {
     mError= "";
     try {
@@ -194,14 +205,19 @@ void shader02vertexApp::drawSpectrum(bool fill) {
 void shader02vertexApp::draw() {
     
 	gl::clear(Color(0, 0, 0));
-    mTextureSnd.bind(0);
-    mTextureFft.bind(1);
+    if(mPcmBuffer) {
+        mTextureSnd.bind(0);
+        mTextureFft.bind(1);
+    }
     mShader->bind();
     mShader->uniform("iResolution", (Vec2f)getWindowSize());
     mShader->uniform("iGlobalTime", (float)getElapsedSeconds());
     mShader->uniform("iAmplitude", mAmplitude);
-    mShader->uniform("iChannel0", 0);   //sound
-    mShader->uniform("iChannel1", 1);   //fft
+    if(mPcmBuffer) {
+        mShader->uniform("iChannel0", 0);   //sound
+        mShader->uniform("iChannel1", 1);   //fft
+    }
+    mShader->uniform("iMouse", mMouse);
     
     gl::color(1.0f, 1.0f, 1.0f);
     switch(mMode) {
@@ -237,8 +253,10 @@ void shader02vertexApp::draw() {
             break;
     }
     mShader->unbind();
-    mTextureSnd.unbind();
-    mTextureFft.unbind();
+    if(mPcmBuffer) {
+        mTextureSnd.unbind();
+        mTextureFft.unbind();
+    }
     
     if(!mHide) {
         Color col= Color(1, 1, 1);

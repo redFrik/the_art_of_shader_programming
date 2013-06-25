@@ -2,6 +2,7 @@
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;
+uniform vec2 iMouse;
 uniform float iAmplitude;
 uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;

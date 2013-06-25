@@ -61,6 +61,10 @@ void draw() {
   shader(mShader);
   mShader.set("iResolution", float(width), float(height));
   mShader.set("iGlobalTime", float(millis())*0.001);
+  if(mousePressed) {
+    mShader.set("iMouse", float(mouseX), float(height-mouseY));
+  }
+  
   fill(255);
   switch(mMode) {
     case 0:

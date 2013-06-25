@@ -2,6 +2,7 @@
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;
+uniform vec2 iMouse;
 
 void main() {
 	vec3 uvw= gl_FragCoord.xyz/vec3(iResolution.xy, 1.0);

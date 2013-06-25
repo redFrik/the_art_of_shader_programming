@@ -175,6 +175,7 @@ the second example is a bit more involved but still deals only with fragment sha
 the main shader01audioInput program is now a little bit more complex.  there are new drawing modes (key 'm') for drawing the raw sound input data as well as the fft spectrum in different ways.  and of course the parts dealing with audio buffers, analysis, fft and textures is new.  you can ignore it for now.
 the new really useful features are the three uniform variables: iAmplitude, iChannel0 and iChannel1.  iAmplitude is tracks amplitude (default buffersize is 2048 and that's used here).  iChannel0 is the raw audio samples as a texture (2048x1 by default) and iChannel1 contains a texture with the fft of the same data (1024x1 by default).
 btw, the names iChannel0, iGlobalTime etc. were chosen to match the ones found in shadertoy.com.
+there is also a new iMouse uniform 2d vector variable that contains the x and y coordinates of the mouse (when clicked).
 
 * now select soundflower as audio input and audio output (in system preferences on osx).
 * start some sound synthesis program (supercollider or puredata) and make sure it is generating sound and outputting to soundflower.

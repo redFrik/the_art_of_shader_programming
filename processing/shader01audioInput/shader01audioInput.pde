@@ -144,8 +144,8 @@ void draw() {
   mShader.set("iAmplitude", mAmplitude);
   mShader.set("iChannel0", mTextureSnd);  //sound
   mShader.set("iChannel1", mTextureFft);  //fft
-  if (mousePressed){
-  mShader.set("iMouse", float(mouseX), float(height-mouseY));
+  if(mousePressed) {
+    mShader.set("iMouse", float(mouseX), float(height-mouseY));
   }
   
   fill(255);
