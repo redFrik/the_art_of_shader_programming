@@ -5,7 +5,7 @@ _for the workshop 'the art of shader programming' at the eye for an ear festival
 
 see <http://www.nkprojekt.de/the-art-of-shader-programming/>
 
-here are instructions and examples for __both__ cinder and processing.  the main focus here will be to use cinder under osx, but if people have problems with xcode, windows and visual c++ or run linux, most of the things will also work with processing.
+here are instructions and examples for __both__ [cinder](http://libcinder.org "cinder") and [processing](http://processing.org "processing").  the main focus here will be to use cinder under osx, but if people have problems with xcode, windows and visual c++ or run linux, most of the things will also work with processing.
 
 workshop plan
 -------------
